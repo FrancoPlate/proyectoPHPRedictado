@@ -4,7 +4,7 @@
 
 Sistema de mensajería instantánea desarrollado como requerimiento académico. La plataforma permite la interacción en tiempo real entre usuarios registrados mediante chats individuales, personalización de conversaciones, restricciones de seguridad e integración con un usuario administrador.
 
-Acá tenés la sección de **Estructura del Proyecto** maquetada para sumar directamente al `README.md`. Representa fielmente la arquitectura MVC/Backend que tenés en la carpeta `src` de tu imagen:
+
 
 ---
 
