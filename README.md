@@ -4,6 +4,21 @@
 
 Sistema de mensajería instantánea desarrollado como requerimiento académico. La plataforma permite la interacción en tiempo real entre usuarios registrados mediante chats individuales, personalización de conversaciones, restricciones de seguridad e integración con un usuario administrador.
 
+Acá tenés la sección de **Estructura del Proyecto** maquetada para sumar directamente al `README.md`. Representa fielmente la arquitectura MVC/Backend que tenés en la carpeta `src` de tu imagen:
+
+---
+
+## 📁 Estructura del Proyecto (`src`)
+
+```text
+src/
+├── controllers/    # Contiene la lógica de negocio y el procesamiento de peticiones HTTP
+├── Middleware/     # Interceptores para autenticación (Bearer Token) y validaciones
+├── models/         # Definición de esquemas, estructuras y consultas a la base de datos
+└── routes/         # Definición de los endpoints y ruteo de la API REST
+
+```
+
 ---
 
 ## 📌 Convenciones de Respuesta de la API
