@@ -21,5 +21,7 @@ $app->post('/login', [AutenticacionController::class, 'IniciarSesion']);
 $app->post('/logout', [AutenticacionController::class, 'Logout'])->add(new IsLoggedMiddleware($app->getResponseFactory())); // para probar
 
 
+$app->get('/usuarios/{user_id}', [UserController::class, 'ObtenerUsuario'])->add(new IsLoggedMiddleware($app->getResponseFactory()));;
+$app->put('/usuarios/{user_id}', [UserController::class, 'EditarUsuario'])->add(new IsLoggedMiddleware($app->getResponseFactory()));;
 
 };
