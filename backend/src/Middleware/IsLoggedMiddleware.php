@@ -72,7 +72,7 @@ class IsLoggedMiddleware implements Middleware
                             ->withStatus(401);
                     }
                     // renovacion
-                    $nuevaFecha = (new \DateTime($user["token_expired_at"]))
+                    $nuevaFecha = (new \DateTime())
                         ->modify('+5 minutes')
                         ->format("Y-m-d H:i:s");
 
@@ -110,4 +110,50 @@ class IsLoggedMiddleware implements Middleware
                 ->withStatus(500);
         }
     }
+
+public static function VerificarToken(string $token): bool
+{
+    try {
+
+        if (empty($token)) {
+            return false;
+        }
+
+        $key = new Key(self::$secret, "HS256");
+
+        JWT::decode($token, $key);
+
+        $user = AutenticacionModel::ObtenerToken($token);
+
+        if (!$user) {
+            return false;
+        }
+
+        $now = new \DateTime();
+        $expire = new \DateTime($user["token_expired_at"]);
+
+        if ($expire <= $now) {
+            return false;
+        }
+
+        // Renovar solamente si todavía está vigente
+        $nuevaFecha = (new \DateTime())
+            ->modify('+5 minutes')
+            ->format("Y-m-d H:i:s");
+
+        AutenticacionModel::ActualizarToken(
+            $user["id"],
+            $token,
+            $nuevaFecha
+        );
+
+        return true;
+
+    } catch (\Exception $e) {
+        return false;
+    }
+}
+
+
+    
 }
