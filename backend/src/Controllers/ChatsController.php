@@ -6,7 +6,7 @@ use App\Models\ChatModel;
 use App\Models\UserModel;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-class ChatController{
+class ChatsController{
 
     public function newChat(Request $request, Response $response, array $args){
         $usuario = $request->getAttribute('usuario');
@@ -16,7 +16,6 @@ class ChatController{
         if ($creado ?? null) {
             return $this->mensaje($response, "El usuario creador debe estar logueado", 401);
         }
-
         
         $user_id = (int) $args['user_id'];
         if ($creado === $user_id) {
@@ -42,10 +41,17 @@ class ChatController{
 
         if (!$existingChat) {
             // No existe chat: se crea el chat y el primer mensaje.
-            $chatId = ChatModel::crearChat($creado, $user_id, $chat);
-            ChatModel::crearMensaje($chatId, $creado, $mensaje);
-            return $this->mensaje($response, 'Chat creado y Mensaje enviado', 200);
+
+            // creamos un try catch? 
+            try{
+                $chatId = ChatModel::crearChat($creado, $user_id, $chat);
+                ChatModel::crearMensaje($chatId, $creado, $mensaje);
+                return $this->mensaje($response, 'Chat creado y Mensaje enviado', 200);
+            }catch(\PDOException $e){
+                 return $this->mensaje($response, $e, 500);
+            }
         }
+        
 
         // Ya existe un chat entre ambos usuarios.
         if ((int) $chat['esta_bloqueado'] === 1) {
@@ -66,7 +72,7 @@ class ChatController{
         return $this->mensaje($response, $result, 200);
     }
 
-    public function actualizar(Request $request, Response $response, array $args)
+    public function putChat(Request $request, Response $response, array $args)
     {
         $usuario = $request->getAttribute('usuario');
         //buscar el id
@@ -104,12 +110,17 @@ class ChatController{
             return $this->mensaje($response, 'El bloqueado debe ser 1 o 0.', 400);
         }
 
-        ChatModel::actualizarChat($existingChat['id'], $nombre,$descripcion,$color,$esta_bloqueado);
+        $actualizado = ChatModel::actualizarChat($existingChat['id'], $nombre,$descripcion,$color,$esta_bloqueado);
 
-        return $this->mensaje($response, 'Chat actualizado correctamente.', 200);
+        if ($actualizado) {
+            return $this->mensaje($response, 'Chat actualizado correctamente.', 200);
+        } else {
+            return $this->mensaje($response, 'No se pudo actualizar el chat o no se realizaron cambios.', 400);
+        }
+        
     }
 
-    public function historia(Request $request, Response $response, array $args)
+    public function getHistory(Request $request, Response $response, array $args)
     {
         $usuario = $request->getAttribute('usuario');
         //buscar el id
@@ -134,6 +145,7 @@ class ChatController{
         $queryParams = $request->getQueryParams();
         $offset = $queryParams['offset'] ?  (int) $queryParams['offset'] : 0;
 
+        // esto deberia ir en el chat modal o en mensaje modal ? 
         $mensajes = ChatModel::obtenerHistoria($existingChat['id'], $quantity, $offset);
 
         return $this->mensaje($response, $mensajes, 200);
