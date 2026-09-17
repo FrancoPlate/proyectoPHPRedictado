@@ -19,7 +19,7 @@ namespace App\Models;
 
         public static function obtenerHistoria($chat_id, $quantity,$offset){
             $pdo = DB::conexion();
-            $query = "SELECT id,texto,fecha_creación, enviado_por FROM mensaje ORDER BY create_at DESC LIMIT :quantity OFFSET :offset WHERE chat_id = :chatid ";
+            $query = "SELECT id,texto,fecha_creación, enviado_por FROM mensaje WHERE chat_id = :chatid ORDER BY created_at DESC LIMIT :quantity OFFSET :offset";
             $stmt = $pdo->prepare($query);
             $stmt->execute([':quantity' => $quantity,
                             ':offset' => $offset,

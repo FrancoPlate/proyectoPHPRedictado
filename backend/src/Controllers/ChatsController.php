@@ -58,6 +58,11 @@ class ChatsController{
             return $this->mensaje($response,'No se pueden enviar mensajes, el chat esta bloqueado.',401);
         }
 
+        $verificar =  MensajeModel::obtenerHistoria($existingChat['id'], 2, 0);
+        if(count($verificar) === 1 && $verificar[0]['enviado_por'] == $usuario){
+            return $this->mensaje($response,'No se pueden enviar mensajes, el destinatario debe responder.',401);
+        }
+
         $result = MensajeModel::newMessage($existingChat['id'], $creado, $mensaje);
         if($result){
             return $this->mensaje($response, 'Mensaje enviado', 200);
