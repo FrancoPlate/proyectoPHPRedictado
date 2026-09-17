@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\ChatModel;
 use App\Models\UserModel;
+use App\Models\MensajeModel;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 class ChatsController{
@@ -42,13 +43,12 @@ class ChatsController{
         if (!$existingChat) {
             // No existe chat: se crea el chat y el primer mensaje.
 
-            // creamos un try catch? 
-            try{
-                $chatId = ChatModel::crearChat($creado, $user_id, $chat);
-                ChatModel::crearMensaje($chatId, $creado, $mensaje);
+            $chatId = ChatModel::crearChat($creado, $user_id, $chat);
+            $result = MensajeModel::newMessage($chatId, $creado, $mensaje);
+            if($result){
                 return $this->mensaje($response, 'Chat creado y Mensaje enviado', 200);
-            }catch(\PDOException $e){
-                 return $this->mensaje($response, $e, 500);
+            }else{
+                return $this->mensaje($response, 'Error al crear el chat o enviar el mensaje', 500);
             }
         }
         
@@ -58,8 +58,13 @@ class ChatsController{
             return $this->mensaje($response,'No se pueden enviar mensajes, el chat esta bloqueado.',401);
         }
 
-        ChatModel::crearMensaje($existingChat['id'], $creado, $mensaje);
-        return $this->mensaje($response, 'Mensaje enviado', 200);
+        $result = MensajeModel::newMessage($existingChat['id'], $creado, $mensaje);
+        if($result){
+            return $this->mensaje($response, 'Mensaje enviado', 200);
+        }else{
+            return $this->mensaje($response, 'Error al enviar el mensaje', 500);
+        }
+        
     }
 
     public function getChats(Request $request, Response $response, array $args)
@@ -67,7 +72,10 @@ class ChatsController{
         $usuario = $request->getAttribute('usuario');
         //buscar el id
         $user = UserModel::ObtenerUsuario($usuario);
+
         $result = chatModel::listarChatsDeUsuario($user);
+
+
 
         return $this->mensaje($response, $result, 200);
     }
@@ -127,6 +135,7 @@ class ChatsController{
         $creado = UserModel::ObtenerUsuario($usuario);
 
         $user_id = (int) $args['user_id'];
+
         //devuelve el chat
         $existingChat = ChatModel::buscarChatEntreUsuarios($creado, $user_id);
 
@@ -144,9 +153,8 @@ class ChatsController{
 
         $queryParams = $request->getQueryParams();
         $offset = $queryParams['offset'] ?  (int) $queryParams['offset'] : 0;
-
-        // esto deberia ir en el chat modal o en mensaje modal ? 
-        $mensajes = ChatModel::obtenerHistoria($existingChat['id'], $quantity, $offset);
+ 
+        $mensajes = MensajeModel::obtenerHistoria($existingChat['id'], $quantity, $offset);
 
         return $this->mensaje($response, $mensajes, 200);
     }
