@@ -1,7 +1,7 @@
 <?php
     namesPace App\Controllers;
 
-    use App\Models\MensajeModel;
+    use App\Models\MessageModel;
     use Psr\Http\Message\ResponseInterface as Response;
     use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -14,7 +14,7 @@
                 return $this->mensaje($response, "El mensaje a eliminar no existe", 400);
             }
 
-            $result = MensajeModel::deleteMessage($message_id);
+            $result = MessageModel::deleteMessage($message_id);
             if($result){
                 return $this->mensaje($response, "Mensaje eliminado con exito.", 200);
             }else{
