@@ -8,10 +8,13 @@ use Dotenv\Dotenv;
 require __DIR__ . '/../vendor/autoload.php';
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+
 $dotenv->load();
 
 $app = AppFactory::create();
-$app->addRoutingMiddleware();
+
+$app->addBodyParsingMiddleware();
+$app->addRoutingMiddleware(); 
 $app->addErrorMiddleware(true, true, true);
 $app->add( function ($request, $handler) {
     $response = $handler->handle($request);

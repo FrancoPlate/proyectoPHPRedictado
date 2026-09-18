@@ -7,10 +7,13 @@
 
         public static function buscarChatEntreUsuarios($user_creador,$user_id){
             $pdo = DB::conexion();
-            $query = "SELECT 1 FROM chat WHERE creado_por = :creado and usuario_id = :user_id";
+            $query = "SELECT * FROM chat 
+              WHERE (creado_por = :creado AND usuario_id = :user_id) 
+                 OR (creado_por = :user_id AND usuario_id = :creado) 
+              ";
             $stmt = $pdo->prepare($query);
             $stmt->execute([":creado" => $user_creador, ":user_id" => $user_id]);
-
+            
             return $stmt->fetch();
         }
 
@@ -34,11 +37,10 @@
 
         public static function listarChatsDeUsuario($user){
             $pdo = DB::conexion();
-
-
             //actual 
             //$query = "SELECT  id,creado_por, usuario_id, nombre, descripción, esta_bloqueado  FROM chat WHERE creado_por = :user or usuario_id = :user";
             //sugerido ?
+            
             $query2 = "SELECT 
                 c.id,
                 c.nombre,
@@ -60,7 +62,7 @@
             LEFT JOIN mensaje m ON m.id = (
                 SELECT id 
                 FROM mensaje 
-                WHERE id = c.id 
+                WHERE chat_id = c.id 
                 ORDER BY created_at DESC, id DESC 
                 LIMIT 1
             )
@@ -76,7 +78,7 @@
 
         public static function actualizarChat($chat_id, $name,$desc,$color,$esta_bloqueado){
             $pdo = DB::conexion();
-            $query = "UPDATE chat SET nombre = :name, descripcion = :desc, color = :color, :bloqueado = esta_bloqueado 
+            $query = "UPDATE chat SET nombre = :name, descripcion = :desc, color = :color, esta_bloqueado = :bloqueado 
                       WHERE id = :chatid";
             $stmt = $pdo->prepare($query);
             $result = $stmt->execute([
