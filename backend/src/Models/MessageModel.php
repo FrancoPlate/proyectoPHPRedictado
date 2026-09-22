@@ -34,7 +34,17 @@ namespace App\Models;
             $pdo = DB::conexion();
             $query = "DELETE FROM mensaje WHERE id= :message";
             $stmt = $pdo->prepare($query);
-            return $stmt->execute([':message' => $message_id]);
+            $stmt->execute([':message' => $message_id]);
+            // Retorna true si se borró al menos 1 fila, o false si no existía el id
+            return $stmt->rowCount() > 0;
+        }
+
+        public static function getMessage($message_id){
+            $pdo = DB::conexion();
+            $query = "SELECT * FROM mensaje WHERE id= :message";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute([':message' => $message_id]);
+            return $stmt->fetch();
         }
 
     }
