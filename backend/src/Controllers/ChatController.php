@@ -93,28 +93,51 @@ class ChatController{
 
         $params = $request->getParsedBody();
 
-        $nombre = $params['nombre'] ? $params['nombre'] : $existingChat['nombre'];
-        $descripcion = $params['descripcion'] ? $params['descripcion'] :  $existingChat['descripcion'];
-        $color = $params['color'] ? $params['color'] : $existingChat['color'];
-        $esta_bloqueado = $params['esta_bloqueado'] ?$params['esta_bloqueado']: $existingChat['esta_bloqueado'];
+        //Validacion de envio de datos o de formato 
+        if (!is_array($params) || empty($params)) {
+            return $this->mensaje($response, 'No se enviaron parámetros o el formato es inválido.', 400);
+        }
+
+        // Si viene la clave la toma; si no existe, conserva el valor actual de $existingChat
+        $nombre = $params['nombre'] ?? $existingChat['nombre'];
+        $descripcion = $params['descripcion'] ??  $existingChat['descripcion'];
+        $color = $params['color'] ?? $existingChat['color'];
+        $esta_bloqueado = $existingChat['esta_bloqueado'] != 1 && array_key_exists('esta_bloqueado', $params) && $params['esta_bloqueado'] !== null 
+            ? (int)$params['esta_bloqueado']  
+            : (int)$existingChat['esta_bloqueado'];
+        
 
         
-        $largoNombre = mb_strlen($nombre);
-        if ($largoNombre < 3 || $largoNombre > 15 || !preg_match('/^[A-Za-z0-9 ]+$/', $nombre)) {
-            return $this->mensaje($response, 'El nombre debe contener solo letras y números, entre 3 y 15 caracteres.', 400);
-        }
         
-        $largoDesc = mb_strlen($descripcion);
-        if ($largoDesc < 20 || $largoDesc > 40 || !preg_match('/^[A-Za-z0-9 ]+$/', $descripcion)) {
-            return $this->mensaje($response, 'La descripción debe contener solo letras y números, entre 20 y 40 caracteres.', 400);
+        if (array_key_exists('nombre', $params)) {
+            $nombre = trim($nombre);
+            $largoNombre = mb_strlen($nombre);
+            if ($largoNombre < 3 || $largoNombre > 15 || !preg_match('/^[A-Za-z0-9 ]+$/', $nombre)) {
+                return $this->mensaje($response, 'El nombre debe contener solo letras y números, entre 3 y 15 caracteres.', 400);
+            }
         }
 
-        if (!empty($color) && !preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $color)) {
-            return $this->mensaje($response, 'El color debe ser un código hexadecimal válido (ej: #FFAA00)', 400);
+        
+        if (array_key_exists('descripcion', $params)) {
+            $descripcion = trim($descripcion);
+            $largoDesc = mb_strlen($descripcion);
+            if ($largoDesc < 20 || $largoDesc > 40 || !preg_match('/^[A-Za-z0-9 ]+$/', $descripcion)) {
+                return $this->mensaje($response, 'La descripción debe contener solo letras y números, entre 20 y 40 caracteres.', 400);
+            }
         }
 
-        if ($esta_bloqueado === null || !in_array((int)$esta_bloqueado, [0, 1], true)) {
-            return $this->mensaje($response, 'El estado bloqueado debe ser 1 o 0.', 400);
+        
+        if (array_key_exists('color', $params)) {
+            $color = trim($color);
+            if (!empty($color) && !preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $color)) {
+                return $this->mensaje($response, 'El color debe ser un código hexadecimal válido (ej: #FFAA00).', 400);
+            }
+        }
+
+        if (array_key_exists('esta_bloqueado', $params)) {
+            if (!in_array((int)$esta_bloqueado, [0, 1], true)) {
+                return $this->mensaje($response, 'El estado bloqueado debe ser 1 o 0.', 400);
+            }
         }
 
         $actualizado = ChatModel::actualizarChat($existingChat['id'], $nombre,$descripcion,$color,$esta_bloqueado);
