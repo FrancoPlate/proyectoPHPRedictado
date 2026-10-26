@@ -74,8 +74,12 @@ public function EditarUsuario(Request $request, Response $response,$args)
 public function EliminarUsuario(Request $request, Response $response,$args)
 { $id=(int)$args['user_id'];
   $user_id=(int)$request->getAttribute('usuario');  
+
   if(!UserModel::EsAdmin($user_id)){
-    return $this->mensaje($response,"Accion requiere permiso de admin",401);
+    return $this->mensaje($response,"Accion requiere permiso de admin",403);
+  }
+  if($id===$user_id){
+    return $this->mensaje($response,"Error no se puede eliminar a si mismo",403);
   }
   if(!UserModel::ObtenerUsuario($id)){
     return $this->mensaje($response,"El usuario no existe",404);
@@ -91,17 +95,17 @@ public function ObtenerUsuarios(Request $request, Response $response)
 
     $search = $data['search'] ?? "";
     $order  = $data['order'] ?? "ASC";
-    $limit  = $data['limit'] ?? 0;
-    $offset = $data['offset'] ?? 0;
-    $user_id=0;
+    $limit  = max(0, (int)($data['limit']  ?? 0));
+    $offset = max(0, (int)($data['offset'] ?? 0));
+    $user_id=null;
     $token = str_replace('Bearer ', '', $request->getHeaderLine("Authorization"))??"";
     // Si el token es inválido, solamente devuelve perfiles públicos
     $tokenValido=IsLoggedMiddleware::VerificarToken($token)??false;
-    echo $tokenValido;
     if (empty($token) ||!($tokenValido)) {
       // si 1 representa es publico
        $users = UserModel::ObtenerUsuarios($user_id,1,$search,$order,$limit,$offset);
-        if(!$users){
+        
+       if(!$users){
           return $this->mensaje($response,"No hay usuarios Publicos disponibles", 404);
          }
       $response->getBody()->write(json_encode($users));
@@ -115,11 +119,12 @@ public function ObtenerUsuarios(Request $request, Response $response)
     if(!$users){
       return $this->mensaje($response,"No hay usuarios Publicos o Privados disponibles", 404);
     }
+
     $esAdmin = UserModel::EsAdmin($user_id);
     if(($user_id!==null)&&($esAdmin!==false)){
       foreach ($users as $key => $user) {
         $cantidad = UserModel::ObtenerCantidad($user['id']);
-        $users[$key]['cantidad'] = $cantidad;
+        $users[$key]['cantidadChats'] = $cantidad;
       }
     }
     $response->getBody()->write(json_encode($users));
