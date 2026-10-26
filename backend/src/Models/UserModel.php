@@ -99,15 +99,19 @@ public static function ObtenerUsuarios($user_id,$es_public,$search, $order, $lim
 {
     $pdo = DB::conexion();
 
-    $sql = "SELECT id, nombre, es_publico, is_admin FROM usuario WHERE id!=?" ;
+    $sql = "SELECT id, nombre, es_publico, is_admin, COUNT(*) OVER() AS cantidadTotal FROM usuario WHERE 1=1" ;
     $valores = [];
-    $valores[]=$user_id;
  // Buscar
+    if ($user_id !== null) {
+    $sql .= " AND id != ?";
+    $valores[] = $user_id;
+    }
+
     if(($es_public==0)||($es_public==1)){
       $sql.=" AND es_publico =?";
       $valores[]=$es_public;
     }else if($es_public==2){
-       $sql.=" AND (es_publico =? OR es_publico=?) AND is_admin=0";
+       $sql.=" AND (es_publico =? OR es_publico=?) ";
       $valores[]=0;
       $valores[]=1;
     }
@@ -124,11 +128,12 @@ public static function ObtenerUsuarios($user_id,$es_public,$search, $order, $lim
     // Límite
     if ((is_int($limit))&&($limit>0)) {
         $sql .= " LIMIT " . (int)$limit;
+       // Offset
+       if ((is_int($limit))&&($offset>0)) {
+         $sql .= " OFFSET " . (int)$offset;
+        }
     }
-    // Offset
-    if ((is_int($limit))&&($offset>0)) {
-        $sql .= " OFFSET " . (int)$offset;
-    }
+
     $stmt = $pdo->prepare($sql);
     $stmt->execute($valores);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -136,7 +141,7 @@ public static function ObtenerUsuarios($user_id,$es_public,$search, $order, $lim
 
 public static function ObtenerCantidad($id)
 {    $pdo = DB::conexion();
-      $sql="SELECT COUNT(*) FROM usuario JOIN chat ON (usuario.id=chat.usuario_id OR usuario.id=chat.creado_por) WHERE usuario.id=? AND (chat.usuario_id=? OR chat.creado_por=?)";
+      $sql="SELECT COUNT(DISTINCT chat.id) FROM usuario INNER JOIN chat ON (usuario.id=chat.usuario_id OR usuario.id=chat.creado_por) WHERE usuario.id=? AND (chat.usuario_id=? OR chat.creado_por=?)";
       $stmt=$pdo->prepare($sql);
       $stmt->execute([$id,$id,$id]);
       return $stmt->fetchColumn();
