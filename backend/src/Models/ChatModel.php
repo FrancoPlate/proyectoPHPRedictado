@@ -17,15 +17,15 @@
             return $stmt->fetch();
         }
 
-        public static function crearChat($user_creador, $user_id,$chat){
+        public static function crearChat($user_creador, $user_id,$nombre, $descripcion){
             $pdo = DB::conexion();
             $query = "INSERT INTO chat (creado_por,usuario_id,nombre,descripcion,color,esta_bloqueado) 
                                 VALUES (:creado,:user_id,:name,:desc,:color,:esta_bloqueado)";
             $stmt = $pdo->prepare($query);
             $result = $stmt ->execute([":creado"=>$user_creador,
                              ":user_id"=>$user_id,
-                             ":name"=>$chat['nombre'],
-                             ":desc"=>$chat['descripcion'],
+                             ":name"=>$nombre,
+                             ":desc"=>$descripcion,
                              ":color"=> "#ffffff",
                              ":esta_bloqueado"=> 0]);
             if ($result) {

@@ -19,6 +19,7 @@ class ChatController{
         }
         //buscar el id del usuario al iniciar el chat
         $usuario_id = UserModel::ObtenerUsuario($user_id);
+        
         if (!$usuario_id) {
             return $this->mensaje($response, "El usuario con el que quieres iniciar el chat no existe", 500);
         }
@@ -28,10 +29,18 @@ class ChatController{
         if (!is_array($params)) {
             return $this->mensaje($response, 'El formato JSON enviado es inválido.', 400);
         }
-        $chat = $params['chat'] ?? null;
-        $mensaje = $params['mensaje'] ?? null;
 
+        
+        $nombre = trim($params['nombreChat'] ?? null);
+        $descripcion = trim($params['descChat'] ?? "");
+        $mensaje = $params['mensaje'] ?? null;
         $largo = mb_strlen($mensaje);
+
+        if($nombre === null || $nombre === ''){
+            $u = UserModel::ObtenerUsuario($usuario);
+            $nombre = $u['username'];
+        }
+
         if ($largo < 1 || $largo > 255) {
             return $this->mensaje($response,'El mensaje debe tener entre 1 y 255 caracteres.',400);
         }
@@ -42,7 +51,7 @@ class ChatController{
         if (!$existingChat) {
             // No existe chat: se crea el chat y el primer mensaje.
 
-            $chatId = ChatModel::crearChat($usuario, $user_id, $chat);
+            $chatId = ChatModel::crearChat($usuario, $user_id, $nombre, $descripcion);
             $result = MessageModel::newMessage($chatId, $usuario, $mensaje);
             if($result){
                 return $this->mensaje($response, 'Chat creado y Mensaje enviado', 200);
@@ -72,10 +81,16 @@ class ChatController{
 
     public function getChats(Request $request, Response $response)
     {
-        echo("aaa");
+        
         $usuario = $request->getAttribute('usuario');
         $result = chatModel::listarChatsDeUsuario($usuario);
         
+        if(empty($result)){
+            return $this->mensaje($response, [
+                "mensaje" => "No tenés conversaciones activas.",
+                "chats" => []
+            ], 201);
+        }
         return $this->mensaje($response, $result, 200);
     }
 

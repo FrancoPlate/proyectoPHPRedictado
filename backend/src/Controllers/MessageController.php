@@ -19,23 +19,18 @@ use Psr\Http\Message\ResponseInterface as Response;
             //Verificamos si es admin
             $isAdmin = UserModel::EsAdmin($usuario);
 
-            if($isAdmin){
-                $result = MessageModel::deleteMessage($message_id);
-                if($result){
-                    return $this->mensaje($response, "Mensaje eliminado con exito.", 200);
-                }else{
-                    return $this->mensaje($response, "El mensaje no existe o ya fue eliminado.", 409);
-                }
-            }
-
             //obtenemos el mensaje para luego comparar si el usuario es el creador del mensaje 
             $message = MessageModel::getMessage($message_id);
-            if($message['enviado_por'] == $usuario){
+            if(empty($message)){
+                return $this->mensaje($response, "El mensaje no existe.", 409);
+            }
+
+            if($isAdmin || $message['enviado_por'] == $usuario){
                 $result = MessageModel::deleteMessage($message_id);
                 if($result){
                     return $this->mensaje($response, "Mensaje eliminado con exito.", 200);
                 }else{
-                    return $this->mensaje($response, "El mensaje no existe o ya fue eliminado.", 409);
+                    return $this->mensaje($response, "El mensaje no existe.", 409);
                 }
             }
             else{
