@@ -21,32 +21,158 @@ src/
 
 ---
 
-## Instalación del proyecto
-1. Instalación de dependencias
+# Instalación del proyecto en Docker
 
-Para instalar las dependencias del proyecto, se deberá ingresar a la carpeta Backend y ejecutar el siguiente comando en la terminal:
+## Índice
 
+1. [Instalación del repositorio Docker](#1-instalación-del-repositorio-docker)
+2. [Copiar los archivos del proyecto](#2-copiar-los-archivos-del-proyecto)
+3. [Instalación de dependencias](#3-instalación-de-dependencias)
+4. [Configuración del archivo `.env`](#4-configuración-del-archivo-env)
+5. [Ejecución de Docker Compose](#5-ejecución-de-docker-compose)
+6. [Detener la ejecución de Docker](#6-detener-la-ejecución-de-docker)
+
+---
+
+## 1. Instalación del repositorio Docker
+
+Antes de comenzar con la instalación del proyecto PHP, se deberán seguir los pasos correspondientes para descargar e instalar el repositorio Docker disponible en el siguiente enlace:
+
+<https://github.com/unlp-seminario-php/docker>
+
+Una vez descargado el repositorio y completados los pasos correspondientes, se podrá continuar con la copia de los archivos del proyecto dentro de la carpeta correspondiente del entorno Docker.
+
+---
+
+## 2. Copiar los archivos del proyecto
+
+Una vez instalado el repositorio Docker, se deberá posicionar en la carpeta raíz del proyecto `proyectoPHPRedictado-developer` y ejecutar el siguiente comando en la terminal:
+
+```bash
+cp -r backend/. ./docker/slim
+```
+
+Este comando copiará todos los archivos y carpetas contenidos en `backend` dentro de la carpeta `docker/slim`.
+
+> **Importante:** la ruta `./docker/slim` deberá reemplazarse por la ruta real donde se encuentre almacenada la carpeta `slim` del repositorio Docker, en caso de que este se encuentre en otra ubicación.
+
+Por ejemplo, si el repositorio Docker se encuentra en la siguiente ruta:
+
+```text
+/home/leonardo/docker2/docker/slim
+```
+
+El comando deberá ejecutarse de la siguiente manera, estando ubicado en la carpeta raíz del proyecto `proyectoPHPRedictado-developer`:
+
+```bash
+cp -r backend/. /home/leonardo/docker2/docker/slim
+```
+
+De esta manera, los archivos del proyecto se copiarán en la ubicación correspondiente.
+
+
+
+## 3. Instalación de dependencias
+
+Una vez copiados los archivos del proyecto, se deberá ingresar a la carpeta `slim` del repositorio Docker.
+
+Por ejemplo, si el repositorio se encuentra en `/home/leonardo/docker2/docker/slim`, ejecutar:
+
+```bash
+cd /home/leonardo/docker2/docker/slim
+```
+
+A continuación, instalar las dependencias del proyecto mediante el siguiente comando:
+
+```bash
 composer install
+```
 
-2. Configuración del archivo .env
+Este comando instalará las dependencias definidas en el archivo `composer.json` del proyecto.
 
-Dentro de la carpeta Backend, se deberá crear un archivo llamado .env con el siguiente contenido:
+Si se produce algún error durante la instalación, se deberá verificar que Composer esté instalado y que la configuración del entorno sea correcta.
 
+> **Importante:** la ruta utilizada en el comando `cd` es un ejemplo y deberá reemplazarse por la ubicación real de la carpeta `slim` en cada equipo.
+
+---
+
+## 4. Configuración del archivo `.env`
+
+Dentro de la carpeta `docker/slim`, se deberá crear un archivo llamado `.env` con el siguiente contenido:
+
+```dotenv
 DB_HOST=db
-
 DB_PORT=3306
-
 DB_NAME=seminariophp
-
 DB_USER=seminariophp
-
 DB_PASS=seminariophp
+```
 
-Importante: Los valores que se encuentran a la derecha del signo = deberán configurarse según la configuración de la base de datos.
-Una vez completados estos pasos, el proyecto estará configurado para continuar con su instalación y ejecución.
+> **Importante:** los valores que se encuentran a la derecha del signo `=` deberán configurarse de acuerdo con los datos de conexión definidos para la base de datos.
 
+Se deberá verificar que el nombre del servicio, el puerto, el nombre de la base de datos, el usuario y la contraseña coincidan con la configuración establecida en Docker.
 
+---
 
+## 5. Ejecución de Docker Compose
+
+Una vez completados los pasos anteriores, se deberá iniciar Docker Compose para poner en funcionamiento los contenedores necesarios para la ejecución del proyecto.
+
+Para ello, se deberá posicionar en el directorio donde se encuentra el archivo `compose.yaml` o `docker-compose.yml` del repositorio Docker.
+
+Por ejemplo, si el archivo se encuentra en `/home/leonardo/docker2/docker`, ejecutar:
+
+```bash
+cd /home/leonardo/docker2/docker
+```
+
+Luego, iniciar los contenedores con el siguiente comando:
+
+```bash
+docker compose up -d
+```
+
+Este comando iniciará los contenedores en segundo plano.
+
+> **Importante:** la ruta `/home/leonardo/docker2/docker` es un ejemplo y deberá reemplazarse por la ubicación real del directorio que contiene el archivo de Docker Compose.
+
+### Verificar el estado de los contenedores
+
+Para comprobar que los contenedores se encuentren funcionando correctamente, ejecutar:
+
+```bash
+docker compose ps
+```
+
+Para consultar los registros de ejecución y detectar posibles errores, ejecutar:
+
+```bash
+docker compose logs -f
+```
+
+Para salir de la visualización de registros, presionar `Ctrl + C`. Esto no detiene los contenedores.
+
+---
+
+## 6. Detener la ejecución de Docker
+
+Para detener los contenedores del proyecto, se deberá posicionar en el mismo directorio donde se encuentra el archivo de Docker Compose y ejecutar:
+
+```bash
+docker compose down
+```
+
+Este comando detendrá y eliminará los contenedores creados por Docker Compose. Los volúmenes persistentes de datos no se eliminan normalmente con este comando.
+
+### Volver a iniciar el proyecto
+
+Para iniciar nuevamente los contenedores, ingresar al directorio donde se encuentra el archivo de Docker Compose y ejecutar:
+
+```bash
+docker compose up -d
+```
+
+---
 
 
 ## 📌 Convenciones de Respuesta de la API
