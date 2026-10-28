@@ -31,10 +31,15 @@ composer install
 2. Configuración del archivo .env
 
 Dentro de la carpeta Backend, se deberá crear un archivo llamado .env con el siguiente contenido:
+
 DB_HOST=db
+
 DB_PORT=3306
+
 DB_NAME=seminariophp
+
 DB_USER=seminariophp
+
 DB_PASS=seminariophp
 
 Importante: Los valores que se encuentran a la derecha del signo = deberán configurarse según la configuración de la base de datos.
