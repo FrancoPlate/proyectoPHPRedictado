@@ -21,6 +21,27 @@ src/
 
 ---
 
+## Instalación del proyecto
+1. Instalación de dependencias
+
+Para instalar las dependencias del proyecto, se deberá ingresar a la carpeta Backend y ejecutar el siguiente comando en la terminal:
+
+composer install
+
+2. Configuración del archivo .env
+
+Dentro de la carpeta Backend, se deberá crear un archivo llamado .env con el siguiente contenido:
+DB_HOST=db
+DB_PORT=3306
+DB_NAME=seminariophp
+DB_USER=seminariophp
+DB_PASS=seminariophp
+
+Importante: Los valores que se encuentran a la derecha del signo = deberán configurarse según la configuración de la base de datos.
+Una vez completados estos pasos, el proyecto estará configurado para continuar con su instalación y ejecución.
+
+
+
 ## 📌 Convenciones de Respuesta de la API
 
 Todos los endpoints de la API REST responden respetando los siguientes códigos de estado HTTP y formatos de error:
