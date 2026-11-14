@@ -1,12 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 //import '../assets/styles/header.css'
-//import heroImg from '../assets/react.svg'
+import ajoloteN from '../assets/ajolote.png'
+import ajoloteA from '../assets/ajolote_boca_abierta.png'
  function Header(){
     return(
-        <div className="header">
+        <div className="">
             <div className="logo">
-                <Link to='/'><img alt="logo"  /></Link>
+                <Link to='/'><img class=" h-25 w-auto" src={ajoloteN} alt="logo" /></Link>
             </div>
             <div className="brr">
             </div>

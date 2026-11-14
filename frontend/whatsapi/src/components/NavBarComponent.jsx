@@ -63,7 +63,7 @@ import '../assets/styles/nav.css'
                     {name !== "" ? (
                         <li><p>Hola {name}</p></li>
                     ) : (
-                        <li><p>-nombre del usuario-</p></li>
+                        <li><p>-Nombre del usuario-</p></li>
                     )}
 
                     <li className="estilo-li"><Link className="estilo-a" to="/misChats">Mis chats</Link></li>
@@ -75,8 +75,8 @@ import '../assets/styles/nav.css'
             ) : (
                 
                 <ul className="estilo-ul">
-                    <li className="estilo-li"><Link to="/auth?tab=login">Login</Link></li>
-                    <li className="estilo-li"><Link to="/auth?tab=register">Registro de usuario</Link></li>
+                    <li className="estilo-li"><Link className="estilo-a" to="/auth?tab=login">Login</Link></li>
+                    <li className="estilo-li"><Link className="estilo-a" to="/auth?tab=register">Registro de usuario</Link></li>
                 </ul>
             )}
         </div>
