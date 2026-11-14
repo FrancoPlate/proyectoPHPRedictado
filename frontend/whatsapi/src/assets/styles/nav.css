@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+.estilo-ul {
+  @apply flex flex-row list-none items-center content-center h-5 ;
+}
+
+.estilo-li{
+    @apply h-auto w-auto p-2 bg-transparent
+}
+
+.estilo-a{
+    @apply inline-block p-3 text-base bg-amber-300 rounded-xs transition-all duration-500 ease-out hover:scale-105 
+}
