@@ -1,24 +1,42 @@
-import React from "react";
-//import heroImg from '../assets/react.svg'
-//import '../assets/styles/footer.css'
+import React, {useState} from "react";
+import ajoloteN from '../assets/ajolote.png'
+import ajoloteA from '../assets/ajolote_boca_abierta.png'
 
 function Footer(){
-    return(
-        <div className="footer">
-            <div className="izqui">
 
+    const [currentImg, setCurrentImg] = useState(ajoloteN);
+    const integrantes = ["Leonardo Fernandez", "Franco Plate"];
+    return(
+        <div className="flex flex-row justify-between">
+            <div className="w-auto max-w-[140px] flex flex-col items-center justify-center">
+                {integrantes.length >0 ? 
+                    (
+                        integrantes.map((inte,index) => 
+                            <p key={index} className=" w-40 text-[16px] font-medium">{inte}</p>
+                        )
+                    ):(
+                        <></>
+                    )
+                }
             </div>
-            <div className="medio">
-                <div>
-                    <img  alt="logo" />
+            <div className="flex flex-col max-w-[140px] justify-center items-center">
+                <img 
+                    className=" h-35 w-auto"
+                    src={currentImg} 
+                    onMouseEnter={() => setCurrentImg(ajoloteA)}
+                    // Al salir el cursor, volvemos a la imagen original
+                    onMouseLeave={() => setCurrentImg(ajoloteN)}
+                    alt="logo" />
+
+                <div className="pb-3">
+                    <h2 className="text-2xl font-medium">WhapsAjo</h2>
                 </div>
-                <div>
-                    <h2>
-                    </h2>
-                </div>
+                
             </div>
-            <div  className="derecha">
-                <h4>2026</h4>
+            <div  className="flex items-center content-center w-[140px]">
+                
+                <h4 className="text-2xl font-medium">©{new Date().getFullYear()}</h4>
+
             </div>
         </div>
     )

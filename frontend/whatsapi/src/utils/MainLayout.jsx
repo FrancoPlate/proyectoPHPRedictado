@@ -7,12 +7,12 @@ import { Outlet } from "react-router-dom";
 
 function MainLayout() {
   return (
-    <div className='flex flex-column min-h-screen'>
-        <div className='flex justify-between items-center py-10'>
+    <div className='flex flex-col min-h-screen'>
+        <div className='flex justify-between items-center py-1'>
           <Header/>
           <NavBar/>
         </div>
-        <main className='flex flex-1 justify-center items-center flex-column'>
+        <main className='flex flex-1 justify-center items-center flex-col'>
             <Outlet />
         </main>
         <Footer/>

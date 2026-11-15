@@ -61,15 +61,14 @@ import '../assets/styles/nav.css'
                 <ul className="estilo-ul">
                     
                     {name !== "" ? (
-                        <li><p>Hola {name}</p></li>
+                        <li><p className="estilo-nombre">Hola {name}</p></li>
                     ) : (
-                        <li><p>-Nombre del usuario-</p></li>
+                        <li><p className="estilo-nombre">-Nombre del usuario-</p></li>
                     )}
 
                     <li className="estilo-li"><Link className="estilo-a" to="/misChats">Mis chats</Link></li>
                     <li className="estilo-li"><Link className="estilo-a" to="/editarUsuario">Editar usuario</Link></li>                    
                     <li className="estilo-li"><button className="estilo-a" onClick={() => handleLogout()}>Logout</button></li>
-                    
                     
                 </ul>
             ) : (

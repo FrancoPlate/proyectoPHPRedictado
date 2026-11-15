@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+
+.estilo-filtro{
+    @apply m-1 px-1 h-auto w-11 bg-amber-200 border-3 border-transparent rounded-full font-medium hover:border-amber-100
+}
