@@ -49,7 +49,7 @@ function ListadoUsuarios( isAdmin, logueado) {
   }, [ascendente, paginaActual]);
   
   return (
-    <div className='my-5 bg-amber-400 w-[400px] min-h-auto max-h-auto rounded-2xl'>
+    <div className='my-5 bg-amber-400 w-100 min-h-auto max-h-auto rounded-2xl'>
         {/*Seccion Encabezado*/}
         <div className='flex justify-end h-15 w-auto'>
           <input
@@ -78,7 +78,7 @@ function ListadoUsuarios( isAdmin, logueado) {
                     
                     <h3 className='h-auto w-auto mx-1 font-medium'>{user.nombre}</h3>
                     {isAdmin ?(
-                        <p className='h-[24px] w-auto mx-1 text-[10px] font-medium flex items-end'>{user.cantidad}</p>
+                        <p className='h-6 w-auto mx-1 text-[10px] font-medium flex items-end'>{user.cantidad}</p>
                       ) : 
                         <></>
                     }
