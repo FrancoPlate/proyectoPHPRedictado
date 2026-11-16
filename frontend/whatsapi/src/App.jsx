@@ -4,13 +4,13 @@ import ChatsPage from './pages/MisChatsPage.jsx'
 import StartPage from './pages/StartPage.jsx'
 //import editarPage from './pages/editarUsuario'
 import MainLayout from './utils/MainLayout.jsx'
+//import api from './service/api.js';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const token = localStorage.getItem('sessionToken');
+  const token = localStorage.getItem('token');
 
-  useEffect(() => {
+  /*useEffect(() => {
     // si no hay token guardado, no está logueado
     if (!token) {
         return; // Frenamos la ejecución
@@ -35,12 +35,12 @@ function App() {
         }
     });
 
-    }, []);
+    }, []);*/
   return (
     <Router>
       <Routes>
         <Route element={<MainLayout/>}>
-          <Route path="/" element={<StartPage isAdmin={isAdmin} logueado={isLoggedIn}/>} />
+          <Route path="/" element={<StartPage logueado={isLoggedIn}/>} />
           <Route path="/misChats" element={<ChatsPage />} />
          
         </Route>

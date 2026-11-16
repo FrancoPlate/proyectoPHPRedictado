@@ -4,20 +4,21 @@ import api from '../service/api.js';
 import star from "../assets/star.svg"
 import '../assets/styles/styleStartPage.css'
 
-function ListadoUsuarios( isAdmin, logueado) {
+function ListadoUsuarios(logueado) {
   // --- 1. ESTADOS LOCALES (BUSQUEDA) ---
   const [users, setUsers] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [ascendente, setAscendente] = useState(true); 
   const [paginaActual, setPaginaActual] = useState(1);
   const usuariosPorPagina = 6;
+  const token = localStorage.getItem('token');
     
   // ==========================================
   //            MANEJADORES DE EVENTOS
   // ==========================================
 
   const siguientePagina = () => {
-    if (usuarios.length < usuariosPorPagina) return;
+    if (users.length < usuariosPorPagina) return;
     setPaginaActual((prev) => prev + 1)
     
   };
@@ -29,8 +30,8 @@ function ListadoUsuarios( isAdmin, logueado) {
   useEffect(() => {
     const obtenerUsuarios = async () => {
       try {
-        // Convertimos el booleano a string 'ASC' o 'DESC' para el backend
         const orden = ascendente ? 'ASC' : 'DESC';
+        
 
         const respuesta = await api.get('/usuarios', {
           params: {
@@ -38,15 +39,27 @@ function ListadoUsuarios( isAdmin, logueado) {
             order: orden,
             limit: usuariosPorPagina,
             offset: (paginaActual - 1) * usuariosPorPagina,
-          }
-        });  
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setUsers(respuesta.data);
       } catch (error) {
-        console.error("Error al traer los usuarios:", error);
+        setUsers([]);
+        if (error.response?.status !== 404) {
+          console.error("Error al traer los usuarios:", error);
+        }
       }
     };
-    obtenerUsuarios();
-  }, [ascendente, paginaActual]);
+
+    // Aplicamos el debounce de 400ms solo si el cambio vino por la búsqueda
+    const timer = setTimeout(() => {
+      obtenerUsuarios();
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [ascendente, paginaActual, busqueda, usuariosPorPagina]);
   
   return (
     <div className='my-5 bg-amber-400 w-100 min-h-auto max-h-auto rounded-2xl'>
@@ -77,14 +90,13 @@ function ListadoUsuarios( isAdmin, logueado) {
                     }
                     
                     <h3 className='h-auto w-auto mx-1 font-medium'>{user.nombre}</h3>
-                    {isAdmin ?(
-                        <p className='h-6 w-auto mx-1 text-[10px] font-medium flex items-end'>{user.cantidad}</p>
-                      ) : 
-                        <></>
+                    {user.cantidadChats !== undefined &&(
+                        <p className='h-6 w-auto mx-1 text-[10px] font-medium flex items-end'>{user.cantidadChats}</p>
+                      )
                     }
                     
                   </div>
-                  <button onClick={isAdmin?console.log(1):console.log(2)} className='mx-3 p-1 h-auto w-auto border-b-2 border-transparent transition-all duration-300 ease-out hover:cursor-pointer hover:border-black'>Z   </button>
+                  <button onClick={() => console.log(user.id)} className='mx-3 p-1 h-auto w-auto border-b-2 border-transparent transition-all duration-300 ease-out hover:cursor-pointer hover:border-black'>Z   </button>
               </div>
             ))
           ):(
@@ -94,20 +106,16 @@ function ListadoUsuarios( isAdmin, logueado) {
         {/*Seccion paginacion*/}
         <div className='m-1 flex justify-end h-10 w-auto'>
           {ascendente ?(
-              <button onClick={()=> setAscendente(false)} className="estilo-filtro">{'asc'}</button>
+              <button onClick={()=> setAscendente(false)} className="estilo-filtro ">{'asc'}</button>
             ):(
               <button onClick={()=> setAscendente(true)}  className="estilo-filtro ">{'des'}</button>
             )
           }
           
-          <button onClick={paginaAnterior} className="estilo-filtro">{'<'}</button>
-          <p className="estilo-filtro">{paginaActual}</p>
-          <button onClick={siguientePagina} disabled={users.length < usuariosPorPagina || users.length === 0} className="estilo-filtro 
-            ${
-              users.length < usuariosPorPagina || users.length === 0 
-                ? 'bg-gray-300 opacity-50 cursor-not-allowed pointer-events-none' 
-                : 'bg-amber-400 hover:bg-amber-300 text-black'
-            }">{'>'}</button>
+          <button onClick={paginaAnterior} className="estilo-filtro ">{'<'}</button>
+          <p className="m-1 px-1 h-auto w-11 bg-amber-200 border-3 border-transparent rounded-full font-medium">{paginaActual}</p>
+          <button onClick={siguientePagina} disabled={users.length < usuariosPorPagina || users.length === 0} className="estilo-filtro
+            disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600">{'>'}</button>
 
         </div>
 

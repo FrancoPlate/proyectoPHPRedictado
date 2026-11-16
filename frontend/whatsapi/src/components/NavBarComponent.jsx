@@ -2,7 +2,7 @@ import React,{useState, useEffect, use} from "react";
 import { Link } from "react-router-dom";
 
 import '../assets/styles/nav.css'
-//import api from '../service/api'
+import api from '../service/api'
 
  function NavBar(){
     // Simulamos el estado de autenticación (cambia a true para probar)
