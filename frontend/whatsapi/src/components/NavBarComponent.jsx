@@ -2,15 +2,15 @@ import React,{useState, useEffect, use} from "react";
 import { Link } from "react-router-dom";
 
 import '../assets/styles/nav.css'
+import '../assets/styles/colors.css'
 //import api from '../service/api'
 
  function NavBar(){
-    // Simulamos el estado de autenticación (cambia a true para probar)
+    // Simulamos el estado de autenticación (true para probar)
     const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [name, setName] = useState("");
     const token = localStorage.getItem('sessionToken'); 
-    // useEffect para revisar el localStorage apenas se carga la barra de navegación
-    // Se ejecuta una sola vez al montar el componente
+    
   useEffect(() => {
     // si ni siquiera hay un token guardado, no está logueado
     if (!token) {
@@ -68,7 +68,7 @@ import '../assets/styles/nav.css'
 
                     <li className="estilo-li"><Link className="estilo-a" to="/misChats">Mis chats</Link></li>
                     <li className="estilo-li"><Link className="estilo-a" to="/editarUsuario">Editar usuario</Link></li>                    
-                    <li className="estilo-li"><button className="estilo-a" onClick={() => handleLogout()}>Logout</button></li>
+                    <li className="estilo-li"><button className="estilo-selec" onClick={() => handleLogout()}>Logout</button></li>
                     
                 </ul>
             ) : (

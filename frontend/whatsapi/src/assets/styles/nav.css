@@ -1,3 +1,4 @@
+@reference "./colors.css";
 @import "tailwindcss";
 
 .estilo-ul {
@@ -9,9 +10,13 @@
 }
 
 .estilo-a{
-    @apply inline-block p-3 text-base font-medium bg-amber-300 rounded-xs transition-all duration-500 ease-out hover:scale-105 
+    @apply second-bg-color primary-text-color inline-block p-3 border border-transparent text-base font-medium rounded-xs transition-all duration-500 ease-out hover:scale-105 hover:border hover:third-border-color
 }
 
 .estilo-nombre{
     @apply  font-medium mx-3
+}
+
+.estilo-selec{
+    @apply third-bg-color second-text-color inline-block p-3 border border-transparent text-base font-medium rounded-xs transition-all duration-500 ease-out hover:scale-105 hover:second-border-color
 }

@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  --color-secondary: #1E293B;
+  --color-third: #FFBF00;
+  --color-primary: #f1f5f9;
+}
+
+@utility third-border-color{
+    @apply border-third
+}
+@utility third-bg-color{
+    @apply bg-third
+}
+@utility third-text-color{
+    @apply text-third
+}
+@utility primary-text-color{
+    @apply text-primary
+}
+
+@utility second-bg-color{
+    @apply bg-secondary
+}
+@utility second-border-color{
+    @apply border-secondary
+}
+@utility second-text-color{
+    @apply text-secondary
+}
