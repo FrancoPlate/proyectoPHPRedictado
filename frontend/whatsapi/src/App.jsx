@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import ChatsPage from './pages/MisChatsPage.jsx'
+import ChatsPage from './pages/misChatsPage.jsx'
 import StartPage from './pages/StartPage.jsx'
+import Register from './pages/RegistroPage.jsx'
 //import editarPage from './pages/editarUsuario'
 import MainLayout from './utils/MainLayout.jsx'
 //import api from './service/api.js';
@@ -42,8 +43,8 @@ function App() {
         <Route element={<MainLayout/>}>
           <Route path="/" element={<StartPage logueado={isLoggedIn}/>} />
           <Route path="/misChats" element={<ChatsPage />} />
-         
         </Route>
+          <Route path="/register" element={<Register />} />
         
       </Routes>
     </Router>

@@ -13,7 +13,7 @@ public function crearUsuario(Request $request, Response $response)
         $username=$user['username']??"";
         $password=$user['password']??"";
         $nombre=$user['nombre']?? "";
-        if ((empty($usename))&&(!preg_match('/^@[a-zA-Z]+$/', $username)) ||(strlen($username) < 5) || (strlen($username) > 12)){
+        if ((empty($username))&&(!preg_match('/^@[a-zA-Z]+$/', $username)) ||(strlen($username) < 5) || (strlen($username) > 12)){
           return $this->mensaje($response,"El username debe poseer minimo 5 letras incluido @ al principio,caracteres maximo 15",400);       
         }
         if(UserModel::UsuarioExistente($username)){
