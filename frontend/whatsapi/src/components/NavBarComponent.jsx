@@ -7,14 +7,14 @@ import '../assets/styles/colors.css'
 
  function NavBar(){
     // Simulamos el estado de autenticación (true para probar)
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [name, setName] = useState("");
     const token = localStorage.getItem('sessionToken'); 
     
   useEffect(() => {
     // si ni siquiera hay un token guardado, no está logueado
     if (!token) {
-        setIsLoggedIn(true);
+        setIsLoggedIn(false);
         return; // Frenamos la ejecución
     }
     api.get('/user', {

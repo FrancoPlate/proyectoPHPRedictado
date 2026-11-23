@@ -68,10 +68,10 @@ function misChats(){
   return (
     <div className="flex h-[70vh] w-full bg-gray-100 overflow-hidden font-sans">
       
-      {/* ================= PANEL IZQUIERDO: MIS CONTACTOS ================= */}
+      
       <Contact chats={chats} chatActivo={chatActivo} onSeleccionarChat={seleccionarChat}/>
 
-      {/* ================= PANEL DERECHO: CHAT ACTIVO ================= */}
+      
       <Chat 
         chatActivo={chatActivo} 
         setChatActivo={setChatActivo}
