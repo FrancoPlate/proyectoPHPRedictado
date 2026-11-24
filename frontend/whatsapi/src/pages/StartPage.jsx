@@ -3,19 +3,17 @@ import React, { useState, useEffect } from 'react';
 import api from '../service/api.js';
 import star from "../assets/star.svg"
 import '../assets/styles/styleStartPage.css'
+import '../assets/styles/colors.css'
 
-function ListadoUsuarios(logueado) {
-  // --- 1. ESTADOS LOCALES (BUSQUEDA) ---
+function ListadoUsuarios({logueado, isAdmin}) {
+
   const [users, setUsers] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [ascendente, setAscendente] = useState(true); 
   const [paginaActual, setPaginaActual] = useState(1);
+  const [hayMas,setHayMas] =useState(false);
   const usuariosPorPagina = 6;
   const token = localStorage.getItem('token');
-    
-  // ==========================================
-  //            MANEJADORES DE EVENTOS
-  // ==========================================
 
   const siguientePagina = () => {
     if (users.length < usuariosPorPagina) return;
@@ -37,14 +35,15 @@ function ListadoUsuarios(logueado) {
           params: {
             search: busqueda,
             order: orden,
-            limit: usuariosPorPagina,
+            limit: usuariosPorPagina + 1,
             offset: (paginaActual - 1) * usuariosPorPagina,
           },
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setUsers(respuesta.data);
+        setHayMas(respuesta.data.length > usuariosPorPagina);
+        setUsers(respuesta.data.slice(0, usuariosPorPagina)); 
       } catch (error) {
         setUsers([]);
         if (error.response?.status !== 404) {
@@ -62,7 +61,7 @@ function ListadoUsuarios(logueado) {
   }, [ascendente, paginaActual, busqueda, usuariosPorPagina]);
   
   return (
-    <div className='my-5 bg-amber-400 w-100 min-h-auto max-h-auto rounded-2xl'>
+    <div className=' second-bg-color my-5 w-100 min-h-auto max-h-auto rounded-2xl'>
         {/*Seccion Encabezado*/}
         <div className='flex justify-end h-15 w-auto'>
           <input
@@ -73,7 +72,7 @@ function ListadoUsuarios(logueado) {
               setBusqueda(e.target.value);
               setPaginaActual(1); // Reiniciar a la página 1 al buscar
             }}
-            className="m-2 p-3 bg-amber-200 border-3 border-transparent rounded-2xl font-medium focus:border-amber-100 focus:border-3 focus:outline-0"
+            className="second-bg-color m-2 p-3 primary-text-color border third-border-color rounded-2xl font-medium focus:outline-0"
           />
         </div>
         {/*Seccion Contenido*/}
@@ -81,44 +80,44 @@ function ListadoUsuarios(logueado) {
 
           {users.length > 0 ? (
             users.map((user)=> (
-              <div key={user.id} className="m-2 p-2 max-w-auto h-12 bg-amber-200 flex justify-between content-center rounded-2xl transition-all duration-300 hover:shadow-xl/20 hover:shadow-amber-100">
+              <div key={user.id} className="second-bg-color m-2 p-2 max-w-auto h-12 border third-border-color flex justify-between content-center rounded-2xl transition-all duration-300 hover:shadow-md hover:shadow-[#FFBF00]">
                   <div className='flex justify-center items-center'>
                     {user.is_admin?(
-                        <span className='isAdmin'><img className='max-h-4 max-w-4 text-amber-400' src={star}/> </span> 
+                        <span className='isAdmin'><img className='max-h-4 max-w-4' src={star}/> </span> 
                       ) : 
                         <></>
                     }
                     
-                    <h3 className='h-auto w-auto mx-1 font-medium'>{user.nombre}</h3>
-                    {user.cantidadChats !== undefined &&(
-                        <p className='h-6 w-auto mx-1 text-[10px] font-medium flex items-end'>{user.cantidadChats}</p>
-                      )
+                    <h3 className='h-auto w-auto mx-1 primary-text-color font-medium'>{user.nombre}</h3>
+                    {isAdmin ?(
+                        <p className='h-6 w-auto mx-1 text-[10px] font-medium flex items-end'>{user.cantidad}</p>
+                      ) : 
+                        <></>
                     }
                     
                   </div>
-                  <button onClick={() => console.log(user.id)} className='mx-3 p-1 h-auto w-auto border-b-2 border-transparent transition-all duration-300 ease-out hover:cursor-pointer hover:border-black'>Z   </button>
+                  <button onClick={isAdmin?console.log(1):console.log(2)} className='mx-3 p-1 h-auto w-auto primary-text-color border-b-2 border-transparent transition-all duration-300 ease-out hover:cursor-pointer hover:border-b-[#FFBF00]'>Z</button>
               </div>
             ))
           ):(
-            <p className="mt-4 text-1xl font-medium">No se encontraron Usuarios.</p>
+            <p className="mt-4 text-1xl font-medium primary-text-color">No se encontraron Usuarios.</p>
           )}
         </div>
         {/*Seccion paginacion*/}
         <div className='m-1 flex justify-end h-10 w-auto'>
           {ascendente ?(
-              <button onClick={()=> setAscendente(false)} className="estilo-filtro ">{'asc'}</button>
+              <button onClick={()=> setAscendente(false)} className="third-border-color primary-text-color estilo-filtro">{'asc'}</button>
             ):(
-              <button onClick={()=> setAscendente(true)}  className="estilo-filtro ">{'des'}</button>
+              <button onClick={()=> setAscendente(true)}  className="third-border-color primary-text-color estilo-filtro ">{'des'}</button>
             )
           }
           
-          <button onClick={paginaAnterior} className="estilo-filtro ">{'<'}</button>
-          <p className="m-1 px-1 h-auto w-11 bg-amber-200 border-3 border-transparent rounded-full font-medium">{paginaActual}</p>
-          <button onClick={siguientePagina} disabled={users.length < usuariosPorPagina || users.length === 0} className="estilo-filtro
-            disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600">{'>'}</button>
+          <button onClick={paginaAnterior} className="third-border-color primary-text-color estilo-filtro">{'<'}</button>
+          <p className="second-bg-color m-1 px-1 h-auto w-11 primary-text-color border-4 border-transparent rounded-full font-medium">{paginaActual}</p>
+          <button onClick={siguientePagina} disabled={!hayMas} className="third-border-color primary-text-color estilo-filtro 
+            ">{'>'}</button>
 
         </div>
-
     </div>
   );
 }

@@ -26,6 +26,7 @@ $app->add( function ($request, $handler) {
         ->withHeader('Content-Type', 'application/json')
     ;
 });
+
 (require __DIR__ . '/../src/Routes/web.php')($app);
 
 $app->run();

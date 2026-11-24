@@ -30,6 +30,20 @@ public function crearUsuario(Request $request, Response $response)
         return $this->mensaje($response,"Registro exitoso",200);
 }
 
+// agregue esto para obtener los datos de nombre de usuario y isAdmin para el frontend
+public function ObtenerUser(Request $request, Response $response,$args){
+    $user_id=(int)$request->getAttribute('usuario');
+    $user=UserModel::ObtenerUsuario($user_id);
+    if(!$user){
+      return $this->mensaje($response,"el usuario requerido no existe",404);
+    }
+    unset($user['username']);
+    unset($user['es_publico']);
+    $user['isAdmin'] = UserModel::EsAdmin($user_id);
+    $response->getBody()->write(json_encode($user));
+     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
+}
+
 
 public function ObtenerUsuario(Request $request, Response $response,$args)
 {   $id=(int)$args['user_id'];

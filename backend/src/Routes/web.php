@@ -25,7 +25,9 @@ return function (App $app) {
     $app->get('/usuarios/{user_id}', [UserController::class, 'ObtenerUsuario'])->add(new IsLoggedMiddleware($app->getResponseFactory()));
     $app->put('/usuarios/{user_id}', [UserController::class, 'EditarUsuario'])->add(new IsLoggedMiddleware($app->getResponseFactory()));
     $app->delete('/usuarios/{user_id}', [UserController::class, 'EliminarUsuario'])->add(new IsLoggedMiddleware($app->getResponseFactory()));
-    $app->get('/usuarios', [UserController::class, 'ObtenerUsuarios']);    
+    $app->get('/usuarios', [UserController::class, 'ObtenerUsuarios']);  
+    
+    $app->get("/usuario", [UserController::class, 'ObtenerUser'])->add(new IsLoggedMiddleware($app->getResponseFactory()));
 
     //----------Chat----------\\
     $app->post('/chats/{user_id}', [ChatController::class, 'newChat'])->add(new IsLoggedMiddleware($app->getResponseFactory()));

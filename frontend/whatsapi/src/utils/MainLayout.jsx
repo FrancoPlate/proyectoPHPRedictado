@@ -5,12 +5,12 @@ import Header from '../components/HeaderComponent'
 import { Outlet } from "react-router-dom";
 //import '../assets/styles/mainL.css'
 
-function MainLayout() {
+function MainLayout({datos,isLoggedIn, onLogout}) {  
   return (
     <div className='flex flex-col min-h-screen'>
         <div className='flex justify-between items-center py-1'>
           <Header/>
-          <NavBar/>
+          <NavBar nombreUsuario={datos} isLoggedIn={isLoggedIn} onLogout={onLogout}/>
         </div>
         <main className='flex flex-1 justify-center items-center'>
             <Outlet />
