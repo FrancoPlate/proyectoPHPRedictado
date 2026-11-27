@@ -55,12 +55,12 @@ class ChatsController{
 
         // Ya existe un chat entre ambos usuarios.
         if ((int) $chat['esta_bloqueado'] === 1) {
-            return $this->mensaje($response,'No se pueden enviar mensajes, el chat esta bloqueado.',401);
+            return $this->mensaje($response,'No se pueden enviar mensajes, el chat esta bloqueado.',403);
         }
 
         $verificar =  MensajeModel::obtenerHistoria($existingChat['id'], 2, 0);
         if(count($verificar) === 1 && $verificar[0]['enviado_por'] == $usuario){
-            return $this->mensaje($response,'No se pueden enviar mensajes, el destinatario debe responder.',401);
+            return $this->mensaje($response,'No se pueden enviar mensajes, el destinatario debe responder.',403);
         }
 
         $result = MensajeModel::newMessage($existingChat['id'], $creado, $mensaje);
