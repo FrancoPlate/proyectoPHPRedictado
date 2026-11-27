@@ -35,7 +35,7 @@ public function ObtenerUsuario(Request $request, Response $response,$args)
 {   $id=(int)$args['user_id'];
     $user_id=(int)$request->getAttribute('usuario');  
     if ($user_id !== $id && !UserModel::EsAdmin($user_id)) {
-      return $this->mensaje($response,"No se puede acceder a otro perfil que no sea propio",401);
+      return $this->mensaje($response,"No se puede acceder a otro perfil que no sea propio",403);
     }
     $user=UserModel::ObtenerUsuario($id);
     if(!$user){
@@ -52,7 +52,7 @@ public function EditarUsuario(Request $request, Response $response,$args)
     $password=$datosActualizar['password']??"";
     $es_public=$datosActualizar['is_public']??null;
     if ($user_id !== $id && !UserModel::EsAdmin($user_id)) {
-      return $this->mensaje($response,"No se puede acceder a otro perfil que no sea propio",401);
+      return $this->mensaje($response,"No se puede acceder a otro perfil que no sea propio",403);
     }
     $user=UserModel::ObtenerUsuario($id); // verificamos que exista el usuario a actualizar
     if(!$user){
