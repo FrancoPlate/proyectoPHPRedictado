@@ -18,6 +18,7 @@
         }
 
         public static function crearChat($user_creador, $user_id,$nombre, $descripcion){
+
             $pdo = DB::conexion();
             $query = "INSERT INTO chat (creado_por,usuario_id,nombre,descripcion,color,esta_bloqueado) 
                                 VALUES (:creado,:user_id,:name,:desc,:color,:esta_bloqueado)";
@@ -26,6 +27,7 @@
                              ":user_id"=>$user_id,
                              ":name"=>$nombre,
                              ":desc"=>$descripcion,
+
                              ":color"=> "#ffffff",
                              ":esta_bloqueado"=> 0]);
             if ($result) {
@@ -41,6 +43,7 @@
             //$query = "SELECT  id,creado_por, usuario_id, nombre, descripción, esta_bloqueado  FROM chat WHERE creado_por = :user or usuario_id = :user";
             //sugerido ?
             
+
             $query2 = "SELECT 
                 c.id,
                 c.nombre,
@@ -48,6 +51,9 @@
                 c.esta_bloqueado,
                 c.creado_por,
                 c.usuario_id,
+
+                u2.is_admin as soy_admin,
+                u.is_admin as es_admin_otro,
                 -- Nombre del OTRO usuario
                 u.nombre AS nombre_interlocutor,
                 -- Texto del último mensaje enviado/recibido (NULL si no hay mensajes aún)
@@ -58,7 +64,10 @@
                 WHEN c.creado_por = :user THEN c.usuario_id 
                 ELSE c.creado_por 
             END
-            -- 2. Traemos solo el último mensaje de cada chat usando una subconsulta
+
+            -- 2. me traigo mi usuario para ver si es admin
+            JOIN usuario u2 ON (c.creado_por=u2.id or c.usuario_id = u2.id) AND u2.id != u.id
+            -- 3. Traemos solo el último mensaje de cada chat usando una subconsulta
             LEFT JOIN mensaje m ON m.id = (
                 SELECT id 
                 FROM mensaje 
@@ -66,11 +75,13 @@
                 ORDER BY created_at DESC, id DESC 
                 LIMIT 1
             )
-            -- 3. Filtramos para que traiga únicamente los chats del usuario actual
-            WHERE c.creado_por = :user OR c.usuario_id = :user
+
+
+            -- 4. Filtramos para que traiga únicamente los chats del usuario actual
+            WHERE c.creado_por = :user OR c.usuario_id = :user AND u2.id= :user
             ORDER BY COALESCE(m.created_at, c.created_at) DESC";
-            
-            
+
+
             $stmt = $pdo->prepare($query2);
             $stmt->execute([":user" => $user]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -79,6 +90,7 @@
         public static function actualizarChat($chat_id, $name,$desc,$color,$esta_bloqueado){
             $pdo = DB::conexion();
             $query = "UPDATE chat SET nombre = :name, descripcion = :desc, color = :color, esta_bloqueado = :bloqueado 
+
                       WHERE id = :chatid";
             $stmt = $pdo->prepare($query);
             $result = $stmt->execute([

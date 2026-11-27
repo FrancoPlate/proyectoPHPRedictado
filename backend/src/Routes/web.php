@@ -6,8 +6,8 @@ use Slim\App;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use App\Controllers\UserController;
-use App\Controllers\AutenticacionController;
 use App\Controllers\ChatController;
+use App\Controllers\AutenticacionController;
 use App\Controllers\MessageController;
 use App\Middleware\IsLoggedMiddleware;
 
@@ -34,5 +34,6 @@ return function (App $app) {
 
     //----------Message----------\\
     $app->delete('/mensajes/{message_id}', [MessageController::class, 'deleteMessage'])->add(new IsLoggedMiddleware($app->getResponseFactory()));
+
     
 };

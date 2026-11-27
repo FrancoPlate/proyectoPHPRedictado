@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 class ChatController{
 
+
     public function newChat(Request $request, Response $response, array $args){
         $usuario = $request->getAttribute('usuario');
         
@@ -41,6 +42,7 @@ class ChatController{
             $nombre = $u['username'];
         }
 
+
         if ($largo < 1 || $largo > 255) {
             return $this->mensaje($response,'El mensaje debe tener entre 1 y 255 caracteres.',400);
         }
@@ -53,6 +55,7 @@ class ChatController{
 
             $chatId = ChatModel::crearChat($usuario, $user_id, $nombre, $descripcion);
             $result = MessageModel::newMessage($chatId, $usuario, $mensaje);
+
             if($result){
                 return $this->mensaje($response, 'Chat creado y Mensaje enviado', 200);
             }else{
@@ -60,17 +63,19 @@ class ChatController{
             }
         }
         
-        
+
+
         // Ya existe un chat entre ambos usuarios.
-        if ((int) $existingChat['esta_bloqueado'] === 1) {
-            return $this->mensaje($response,'No se pueden enviar mensajes, el chat esta bloqueado.',401);
+        if ((int) $chat['esta_bloqueado'] === 1) {
+            return $this->mensaje($response,'No se pueden enviar mensajes, el chat esta bloqueado.',403);
         }
-        
-        $verificar =  MessageModel::obtenerHistoria($existingChat['id'], 2, 0);
+
+        $verificar =  MensajeModel::obtenerHistoria($existingChat['id'], 2, 0);
         if(count($verificar) === 1 && $verificar[0]['enviado_por'] == $usuario){
-            return $this->mensaje($response,'No se pueden enviar mensajes, el destinatario debe responder.',401);
+            return $this->mensaje($response,'No se pueden enviar mensajes, el destinatario debe responder.',403);
         }
-        $result = MessageModel::newMessage($existingChat['id'], $usuario, $mensaje);
+
+        $result = MensajeModel::newMessage($existingChat['id'], $creado, $mensaje);
         if($result){
             return $this->mensaje($response, 'Mensaje enviado', 200);
         }else{
@@ -79,19 +84,19 @@ class ChatController{
         
     }
 
-    public function getChats(Request $request, Response $response)
+
+    public function getChats(Request $request, Response $response, array $args)
     {
-        
         $usuario = $request->getAttribute('usuario');
-        $result = chatModel::listarChatsDeUsuario($usuario);
-        
-        if(empty($result)){
-            return $this->mensaje($response, [
-                "mensaje" => "No tenés conversaciones activas.",
-                "chats" => []
-            ], 201);
-        }
-        return $this->mensaje($response, $result, 200);
+        //buscar el id
+        $user = UserModel::ObtenerUsuario($usuario);
+
+        $result = chatModel::listarChatsDeUsuario($user);
+
+
+
+        $response->getBody()->write(json_encode($result));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);    
     }
 
     public function putChat(Request $request, Response $response, array $args)
@@ -103,6 +108,7 @@ class ChatController{
         $existingChat = ChatModel::buscarChatEntreUsuarios($usuario, $user_id);
 
         if (!$existingChat) {
+
             return $this->mensaje($response, 'No existe un chat con ese usuario.', 404);
         }
 
@@ -153,6 +159,7 @@ class ChatController{
             if (!in_array((int)$esta_bloqueado, [0, 1], true)) {
                 return $this->mensaje($response, 'El estado bloqueado debe ser 1 o 0.', 400);
             }
+
         }
 
         $actualizado = ChatModel::actualizarChat($existingChat['id'], $nombre,$descripcion,$color,$esta_bloqueado);
@@ -169,12 +176,14 @@ class ChatController{
     {
         $usuario = $request->getAttribute('usuario');
 
+
         $user_id = (int) $args['user_id'];
 
         //devuelve el chat
         $existingChat = ChatModel::buscarChatEntreUsuarios($usuario, $user_id);
 
         if (!$existingChat) {
+
             return $this->mensaje($response, 'No existe un chat con ese usuario.', 404);
         }
 
@@ -190,6 +199,8 @@ class ChatController{
         $offset = isset($queryParams['offset']) ?  (int) $queryParams['offset'] : 0;
  
         $mensajes = MessageModel::obtenerHistoria($existingChat['id'], $quantity, $offset);
+
+
 
         return $this->mensaje($response, $mensajes, 200);
     }
