@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
+import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import api from '../service/api.js';
 import star from "../assets/star.svg"
 import '../assets/styles/styleStartPage.css'
@@ -15,6 +17,8 @@ function ListadoUsuarios({logueado, isAdmin}) {
   const usuariosPorPagina = 6;
   const token = localStorage.getItem('token');
 
+  const navigate = useNavigate();
+
   const siguientePagina = () => {
     if (users.length < usuariosPorPagina) return;
     setPaginaActual((prev) => prev + 1)
@@ -29,8 +33,6 @@ function ListadoUsuarios({logueado, isAdmin}) {
     const obtenerUsuarios = async () => {
       try {
         const orden = ascendente ? 'ASC' : 'DESC';
-        
-
         const respuesta = await api.get('/usuarios', {
           params: {
             search: busqueda,
@@ -47,7 +49,8 @@ function ListadoUsuarios({logueado, isAdmin}) {
       } catch (error) {
         setUsers([]);
         if (error.response?.status !== 404) {
-          console.error("Error al traer los usuarios:", error);
+          console.error("Error al traer los usuarios:", error.response?.status);
+          toast.error(`Error al traer los usuarios: ${error.response?.status}`)
         }
       }
     };
@@ -59,6 +62,16 @@ function ListadoUsuarios({logueado, isAdmin}) {
 
     return () => clearTimeout(timer);
   }, [ascendente, paginaActual, busqueda, usuariosPorPagina]);
+
+  const irChat = async (idUser) => {
+      if(logueado) {
+        navigate('/misChats')
+        }
+      else{
+        toast.error(`Inicia sesión para entrar a un chat.`)
+        navigate('/login')
+      }
+  }
   
   return (
     <div className=' second-bg-color my-5 w-100 min-h-auto max-h-auto rounded-2xl'>
@@ -90,13 +103,13 @@ function ListadoUsuarios({logueado, isAdmin}) {
                     
                     <h3 className='h-auto w-auto mx-1 primary-text-color font-medium'>{user.nombre}</h3>
                     {isAdmin ?(
-                        <p className='h-6 w-auto mx-1 text-[10px] font-medium flex items-end'>{user.cantidad}</p>
+                        <p className='h-6 w-auto mx-1 text-[10px] primary-text-color font-medium flex items-end'>{user.cantidadChats}</p>
                       ) : 
                         <></>
                     }
                     
                   </div>
-                  <button onClick={isAdmin?console.log(1):console.log(2)} className='mx-3 p-1 h-auto w-auto primary-text-color border-b-2 border-transparent transition-all duration-300 ease-out hover:cursor-pointer hover:border-b-[#FFBF00]'>Z</button>
+                  <button onClick={() => irChat(user.id)} className='mx-3 p-1 h-auto w-auto primary-text-color border-b-2 border-transparent transition-all duration-300 ease-out hover:cursor-pointer hover:border-b-[#FFBF00]'>Z</button>
               </div>
             ))
           ):(

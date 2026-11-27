@@ -121,9 +121,6 @@ class ChatController{
             ? (int)$params['esta_bloqueado']  
             : (int)$existingChat['esta_bloqueado'];
         
-
-        
-        
         if (array_key_exists('nombre', $params)) {
             $nombre = trim($nombre);
             $largoNombre = mb_strlen($nombre);
@@ -195,7 +192,7 @@ class ChatController{
     }
 
     private function mensaje($response, $msj, $num): Response {
-        $response->getBody()->write(json_encode([$msj]));
+        $response->getBody()->write(json_encode($msj));
         return $response->withHeader('Content-Type', 'application/json')->withStatus($num);
     }
 }

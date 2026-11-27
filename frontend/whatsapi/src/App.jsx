@@ -5,7 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ChatsPage from './pages/MisChatsPage.jsx'
 import StartPage from './pages/StartPage.jsx'
-//import editarPage from './pages/editarUsuario'
+import Register from './pages/RegistroPage.jsx'
 import MainLayout from './utils/MainLayout.jsx'
 import api from './service/api.js';
 
@@ -19,7 +19,7 @@ function App() {
   useEffect(() => {
    
     if (!token ) return;  // si no hay token guardado, no está logueado y frenamos la ejecución
-    const controller = new AbortController();
+    const controller = new AbortController(); // parche para que no salte doble notificacion de error
 
     api.get('/usuario', {
         headers: {'Authorization': `Bearer ${token}`},
@@ -75,8 +75,9 @@ function App() {
         <Route element={<MainLayout datos={name} isLoggedIn={isLoggedIn} onLogout={handleLogout}/>}>
           <Route path="/" element={<StartPage logueado={isLoggedIn} isAdmin={isAdmin}/>} />
           <Route path="/misChats" element={<ChatsPage />} />
-         
         </Route>
+        <Route path="/register" element={<Register />} />
+
         
       </Routes>
     </Router>

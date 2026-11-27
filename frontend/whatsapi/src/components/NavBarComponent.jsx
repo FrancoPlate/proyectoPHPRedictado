@@ -35,8 +35,8 @@ import api from '../service/api'
             ) : (
                 
                 <ul className="estilo-ul">
-                    <li className="estilo-li"><Link className="estilo-a" to="/auth?tab=login">Login</Link></li>
-                    <li className="estilo-li"><Link className="estilo-a" to="/auth?tab=register">Registro de usuario</Link></li>
+                    <li className="estilo-li"><Link className="estilo-a" to="/login">Login</Link></li>
+                    <li className="estilo-li"><Link className="estilo-a" to="/register">Registro de usuario</Link></li>
                 </ul>
             )}
         </div>
