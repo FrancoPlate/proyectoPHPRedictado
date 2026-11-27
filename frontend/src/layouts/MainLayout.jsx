@@ -1,4 +1,3 @@
-
 import { Outlet } from "react-router-dom";
 
 import HeaderComponent from "../components/HeaderComponent";
@@ -7,12 +6,11 @@ import NavBarComponent from "../components/NavBarComponent";
 
 export default function MainLayout() {
   return (
-    <div>
+    <div className="flex flex-col w-full min-h-screen bg-slate-950 m-0 p-0">
+      <HeaderComponent />
       <NavBarComponent />
 
-      <HeaderComponent />
-
-      <main>
+      <main className="flex-1 w-full bg-slate-950">
         <Outlet />
       </main>
 
